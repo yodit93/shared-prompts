@@ -4,7 +4,7 @@ import Link  from 'next/link'
 import Image from 'next/image'
 import { signOut, signIn, getProviders } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import { set } from 'mongoose'
+
 
 const Nav = () => {
   const isUserLoggedIn = true;
