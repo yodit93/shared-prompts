@@ -13,7 +13,8 @@ const Nav = () => {
 
   useEffect(() => {
     const fetchProviders= async () => {
-      const providers = await getProviders()
+      const providers = await getProviders();
+      console.log(providers)
       setProviders(providers)
     }
     fetchProviders()
@@ -52,14 +53,16 @@ const Nav = () => {
           <>
             
             {providers && Object.values(providers).map((provider) => (
-              <button 
-                type='button' 
-                key={provider.name} 
-                onClick={() => signIn(provider.id)}
-              >
-                
-                Sign in with {provider.name}
-              </button>
+              <button
+              type='button'
+              key={provider.name}
+              onClick={() => {
+                signIn(provider.id);
+              }}
+              className='black_btn'
+            >
+              Sign in
+            </button>
             ))}
           </>
         )}
@@ -109,13 +112,15 @@ const Nav = () => {
         ) : (
             <>
               {providers && Object.values(providers).map((provider) => (
-                <button 
-                  type='button' 
-                  key={provider.name} 
-                  onClick={() => signIn(provider.id)}
+                <button
+                  type='button'
+                  key={provider.name}
+                  onClick={() => {
+                    signIn(provider.id);
+                  }}
+                  className='black_btn'
                 >
-                  
-                  Sign in with {provider.name}
+                  Sign in
                 </button>
               ))}
             </>

@@ -1,54 +1,47 @@
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import { connectToDatabase } from "@utils/database";
-import User from "@models/User"; // Ensure the User model is correctly imported
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+
+import User from '@models/user';
+import { connectToDB } from '@utils/database';
 
 const handler = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    })
   ],
   callbacks: {
     async session({ session }) {
-      await connectToDatabase();
-
-      const sessionUser = await User.findOne({
-        email: session.user.email,
-      });
-
-      // Add user id to session
-      session.user.id = sessionUser._id.toString(); // Use `_id` and convert to string
+      // store the user id from MongoDB to session
+      const sessionUser = await User.findOne({ email: session.user.email });
+      session.user.id = sessionUser._id.toString();
 
       return session;
     },
-
-    async signIn({ profile }) {
+    async signIn({ account, profile, user, credentials }) {
       try {
-        await connectToDatabase();
+        await connectToDB();
 
-        // Check if user exists in the database
-        const userExists = await User.findOne({
-          email: profile.email,
-        });
+        // check if user already exists
+        const userExists = await User.findOne({ email: profile.email });
 
-        // If user does not exist, create a new user
+        // if not, create a new document and save user in MongoDB
         if (!userExists) {
           await User.create({
             email: profile.email,
-            username: profile.email.split("@")[0],
-            image: profile.picture, // Use profile.picture for Google profile images
+            username: profile.name.replace(" ", "").toLowerCase(),
+            image: profile.picture,
           });
         }
 
-        return true;
+        return true
       } catch (error) {
-        console.error("Error during sign-in:", error);
-        return false;
+        console.log("Error checking if user exists: ", error.message);
+        return false
       }
     },
-  },
-});
+  }
+})
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }
