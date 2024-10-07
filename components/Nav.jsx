@@ -2,12 +2,12 @@
 
 import Link  from 'next/link'
 import Image from 'next/image'
-import { signOut, signIn, getProviders } from 'next-auth/react'
+import { signOut, signIn, getProviders, useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 
 
 const Nav = () => {
-  const isUserLoggedIn = true;
+  const { data: session } = useSession();
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
 
@@ -32,7 +32,7 @@ const Nav = () => {
       </Link>
       {/* disktop navigation */}
       <div className='sm:flex hidden'>
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className='flex gap-3 md:gap-5'>
             <Link href='/create-prompt' className='black_btn'>
               Create Prompt
@@ -69,7 +69,7 @@ const Nav = () => {
       </div>
       {/* mobile navigation */}
       <div className='sm:hidden flex relative'>
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className='flex'>
             <Image
               src='/assets/images/logo.svg'
